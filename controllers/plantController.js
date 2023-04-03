@@ -24,7 +24,7 @@ class PlantController {
    async getAll(req, res) {
       let {categoryId, limit, page} = req.query
       page = page || 1
-      limit = limit || 12
+      limit = limit || 12 
       let offset = page * limit - limit
       let plants
       if (!categoryId) {
