@@ -18,6 +18,16 @@ class PlantController {
       } catch(e) {
          next(ApiError.badRequest(e.message))
       }
+   }
+
+   async delete(req, res, next) {
+      try {
+         const {id} = req.params
+         const plant = await Plant.destroy({where:{id}})
+         return res.json("Succeess delete!")
+      } catch(e) {
+         next(ApiError.badRequest(e.message))
+      }
 
    }
 

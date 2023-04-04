@@ -28,6 +28,17 @@ class UserController {
       return res.json({token})
    }
 
+   async delete(req, res, next) {
+      try {
+         const {id} = req.params
+         const user = await User.destroy({where:{id}})
+         return res.json("Succeess delete!")
+      } catch(e) {
+         next(ApiError.badRequest(e.message))
+      }
+
+   }
+
    async login(req, res, next) {
       const {email, password} = req.body
       const user = await User.findOne({where: {email}})
