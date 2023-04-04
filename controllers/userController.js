@@ -27,6 +27,12 @@ class UserController {
       const token = generateJwt(user.id, user.email, user.role)
       return res.json({token})
    }
+   
+   async delete(req, res) {
+      const {id} = req.params
+      const user = await User.destroy({where:{id}}) 
+      return res.json("Success delete!")
+   }
 
    async delete(req, res, next) {
       try {

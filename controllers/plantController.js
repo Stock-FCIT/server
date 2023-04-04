@@ -1,18 +1,28 @@
-const uuid = require('uuid')
-const path = require('path')
 const {Plant} = require('../models/models') 
 const ApiError = require('../error/ApiError')
-const { where } = require('sequelize')
+const { uploadToCloudinary } = require("../service/upload.service");
+const { ErrorHandler } = require('../utils/errorHandler')
+const { bufferToDataURI } = require('../utils/file')
 
 class PlantController {
+
    async create(req, res, next) {
       try {
          const {name, price, description, categoryId, rating} = req.body
-         const {img} = req.files
-         let fileName = uuid.v4() + ".jpg"
-         img.mv(path.resolve(__dirname, '..', 'static', fileName))
-
-         const plant = await Plant.create({name, price, description, categoryId, img: fileName, rating})
+         const { file } = req
+         if (!file) throw new ErrorHandler(400, 'Image is required')
+     
+         const fileFormat = file.mimetype.split('/')[1]
+         const { base64 } = bufferToDataURI(fileFormat, file.buffer)
+     
+         const imageDetails = await uploadToCloudinary(base64, fileFormat)
+     
+         // res.json({
+         //   status: 'success',
+         //   message: 'Upload successful',
+         //   data: imageDetails,
+         // })
+         const plant = await Plant.create({name, price, description, categoryId, img: imageDetails.url, rating})
 
          return res.json(plant)
       } catch(e) {
@@ -29,6 +39,12 @@ class PlantController {
          next(ApiError.badRequest(e.message))
       }
 
+   }
+
+   async delete(req, res) {
+      const {id} = req.params
+      const plant = await Plant.destroy({where:{id}}) 
+      return res.json("Success delete!")
    }
 
    async getAll(req, res) {
