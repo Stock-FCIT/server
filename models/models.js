@@ -27,7 +27,7 @@ const Plant = sequelize.define('plant',{
    price: {type: DataTypes.REAL, allowNull: false},
    description: {type: DataTypes.TEXT},
    img: {type: DataTypes.STRING, allowNull: false},
-   rating: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 0}
+   // rating: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 0}
 })
 
 const Category = sequelize.define('category',{
