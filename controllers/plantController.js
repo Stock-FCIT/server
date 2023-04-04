@@ -7,12 +7,12 @@ const { where } = require('sequelize')
 class PlantController {
    async create(req, res, next) {
       try {
-         const {name, price, description, categoryId} = req.body
+         const {name, price, description, categoryId, rating} = req.body
          const {img} = req.files
          let fileName = uuid.v4() + ".jpg"
          img.mv(path.resolve(__dirname, '..', 'static', fileName))
 
-         const plant = await Plant.create({name, price, description, categoryId, img: fileName})
+         const plant = await Plant.create({name, price, description, categoryId, img: fileName, rating})
 
          return res.json(plant)
       } catch(e) {
