@@ -3,9 +3,13 @@ const ApiError = require('../error/ApiError')
 
 class CategoryController {
    async create(req, res) {
-      const {name} = req.body
-      const category = await Category.create({name})
-      return res.json({category})
+      try {
+         const {name} = req.body
+         const category = await Category.create({name})
+         return res.json({category})
+      } catch (e) {
+         next(ApiError.badRequest(e.message))
+      }
    }
 
    async delete(req, res) {

@@ -41,12 +41,6 @@ class PlantController {
 
    }
 
-   async delete(req, res) {
-      const {id} = req.params
-      const plant = await Plant.destroy({where:{id}}) 
-      return res.json("Success delete!")
-   }
-
    async getAll(req, res) {
       let {categoryId, limit, page} = req.query
       page = page || 1

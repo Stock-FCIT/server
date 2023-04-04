@@ -13,27 +13,29 @@ const generateJwt = (id, email, role) => {
 
 class UserController {
    async registration(req, res, next) {
-      const {name, email, phone, password, role} = req.body
-      if (!email || !password) {
-         return next(ApiError.badRequest('Некоректний email або password'))
+      try {
+         const {name, email, phone, password, role} = req.body
+         if (!email || !password) {
+            return res.json('Incorrect email or password')
+         }
+         const candidate = await User.findOne({where: {email}})
+         if (candidate) {
+            return res.json('User with this e-mail is already existed')
+         }
+         const candidatePhone = await User.findOne({where: {phone}})
+         if (candidatePhone) {
+            return res.json('User with this phone is already existed')
+         }
+         const hashPassword = await bcrypt.hash(password, 5)
+         const user = await User.create({name, email, phone, role, password:hashPassword})
+         const basket = await Basket.create({userId: user.id})
+         const token = generateJwt(user.id, user.email, user.role)
+         return res.json({token})
+      } catch(e) {
+         next(ApiError.badRequest(e.message))
       }
-      const candidate = await User.findOne({where: {email}})
-      if (candidate) {
-         return next(ApiError.badRequest('Користувач з таким email вже існує'))
-      }
-      const hashPassword = await bcrypt.hash(password, 5)
-      const user = await User.create({name, email, phone, role, password:hashPassword})
-      const basket = await Basket.create({userId: user.id})
-      const token = generateJwt(user.id, user.email, user.role)
-      return res.json({token})
    }
    
-   async delete(req, res) {
-      const {id} = req.params
-      const user = await User.destroy({where:{id}}) 
-      return res.json("Success delete!")
-   }
-
    async delete(req, res, next) {
       try {
          const {id} = req.params
@@ -46,17 +48,21 @@ class UserController {
    }
 
    async login(req, res, next) {
-      const {email, password} = req.body
-      const user = await User.findOne({where: {email}})
-      if (!user) {
-         return next(ApiError.internal('Користувача з таким email не знайдено'))
+      try {
+         const {email, password} = req.body
+         const user = await User.findOne({where: {email}})
+         if (!user) {
+            return res.json('Користувача з таким email не знайдено')
+         }
+         let comparePassword = bcrypt.compareSync(password, user.password)
+         if (!comparePassword) {
+            return res.json('Вказаний невірний password')
+         }
+         const token = generateJwt(user.id, user.email, user.role)
+         return res.json(token)
+      } catch (e) {
+         next(ApiError.badRequest(e.message))
       }
-      let comparePassword = bcrypt.compareSync(password, user.password)
-      if (!comparePassword) {
-         return next(ApiError.internal('Вказаний невірний password'))
-      }
-      const token = generateJwt(user.id, user.email, user.role)
-      return res.json(token)
    }
 
    async check(req, res, next) {
