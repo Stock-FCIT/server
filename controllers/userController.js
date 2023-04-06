@@ -19,12 +19,15 @@ class UserController {
             return res.json('Incorrect email or password')
          }
          const candidate = await User.findOne({where: {email}})
-         if (candidate) {
-            return res.json('User with this e-mail is already existed')
-         }
          const candidatePhone = await User.findOne({where: {phone}})
+         if (candidate && candidatePhone) {
+            return res.status(500).json({message: 'User with this e-mail and phone is already existed'})
+         }
+         if (candidate) {
+            return res.status(500).json({message: 'User with this e-mail is already existed'})
+         }
          if (candidatePhone) {
-            return res.json('User with this phone is already existed')
+            return res.status(500).json({message: 'User with this phone is already existed'})
          }
          const hashPassword = await bcrypt.hash(password, 5)
          const user = await User.create({name, email, phone, role, password:hashPassword})
@@ -52,11 +55,11 @@ class UserController {
          const {email, password} = req.body
          const user = await User.findOne({where: {email}})
          if (!user) {
-            return res.json('Користувача з таким email не знайдено')
+            return res.status(500).json({message: 'User with this e-mail cannot be found'})
          }
          let comparePassword = bcrypt.compareSync(password, user.password)
          if (!comparePassword) {
-            return res.json('Вказаний невірний password')
+            return res.status(500).json({message: 'Incorrect password'})
          }
          const token = generateJwt(user.id, user.email, user.role)
          return res.json(token)
@@ -68,6 +71,12 @@ class UserController {
    async check(req, res, next) {
       const token = generateJwt(req.user.id, req.user.email, req.user.role)
       return res.json({token})
+   }
+
+   async getUserInfo(req, res) {
+      const {id} = req.params
+      const user = await User.findOne({where:{id}}) 
+      return res.json(user)
    }
 }
 

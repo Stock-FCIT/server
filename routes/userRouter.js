@@ -11,5 +11,7 @@ router.delete(
 );
 router.post('/login', userController.login);
 router.get('/auth', authMiddleware, userController.check);
+router.get('/:id', userController.getUserInfo);
+
 
 module.exports = router
