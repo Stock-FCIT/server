@@ -49,13 +49,60 @@ class UserController {
       }
 
    }
+      
+   async update(req, res, next) {
+      try{ 
+         const {id} = req.params
+         const {name, email, phone, country, city, address} = req.body
+         const userToUpdate = User.update(
+            {
+               name: name,
+               email: email,
+               phone: phone,
+               country: country,
+               city: city,
+               address: address
+            },
+            {where:{id}})
+         res.json("Success update!")
+      } catch (e) {
+         next(ApiError.badRequest(e.message))
+      }
+   }
+
+   async updatePassword(req, res, next) {
+      try{ 
+         const {id} = req.params
+         const {currentPassword, password} = req.body
+         const user = await User.findOne({where: {id}})
+         let comparePassword = bcrypt.compareSync(currentPassword, user.password)
+         if (!comparePassword) {
+            return res.status(500).json({message: 'Current Password is incorrect!'})
+         } 
+         if (currentPassword === password) {
+            return res.status(500).json({message: 'New password must be different from previous!'})
+         } 
+         const hashPassword = await bcrypt.hash(password, 5)
+         const passwordToUpdate = User.update(
+            {
+               password: hashPassword
+            },
+            {where:{id}})
+         res.json("Password changed!")
+      } catch (e) {
+         next(ApiError.badRequest(e.message))
+      }
+   }
 
    async login(req, res, next) {
       try {
          const {email, password} = req.body
          const user = await User.findOne({where: {email}})
+         if (!user) {
+            return res.status(500).json({message: 'The email or password is incorrect'})
+         }
          let comparePassword = bcrypt.compareSync(password, user.password)
-         if (!user || !comparePassword) {
+         if (!comparePassword) {
             return res.status(500).json({message: 'The email or password is incorrect'})
          }
          const token = generateJwt(user.id, user.email, user.role)
@@ -73,7 +120,16 @@ class UserController {
    async getUserInfo(req, res) {
       const {id} = req.params
       const user = await User.findOne({where:{id}}) 
-      return res.json(user)
+      return res.json({
+         id: user.id, 
+         name: user.name,
+         email: user.email,
+         phone: user.phone,
+         country: user.country,
+         city: user.city,
+         address: user.address,
+         role: user.role
+      })
    }
 }
 

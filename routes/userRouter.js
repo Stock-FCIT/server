@@ -10,6 +10,8 @@ router.delete(
    userController.delete
 );
 router.post('/login', userController.login);
+router.patch('/update/:id', userController.update)
+router.patch('/updatePassword/:id', userController.updatePassword)
 router.get('/auth', authMiddleware, userController.check);
 router.get('/:id', userController.getUserInfo);
 
