@@ -42,19 +42,23 @@ class PlantController {
    }
 
    async getAll(req, res) {
-      let {categoryId, limit, page} = req.query
-      page = page || 1
-      limit = limit || 12 
-      let offset = page * limit - limit
-      let plants
-      if (!categoryId) {
-         plants = await Plant.findAndCountAll({limit, offset})
-      }
-      if (categoryId) {
-         plants = await Plant.findAndCountAll({where:{categoryId, limit, offset}})
-      }
+      try {
+         let {categoryId, limit, page} = req.query
+         page = page || 1
+         limit = limit || 12 
+         let offset = page * limit - limit
+         let plants
+         if (!categoryId) {
+            plants = await Plant.findAndCountAll({limit, offset})
+         }
+         if (categoryId) {
+            plants = await Plant.findAndCountAll({where:{categoryId, limit, offset}})
+         }
 
-      return res.json(plants)
+         return res.json(plants)
+      } catch (e) {
+         next(ApiError.badRequest(e.message))
+      }
    }
 
    async getOne(req, res) {
