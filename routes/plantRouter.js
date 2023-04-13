@@ -1,4 +1,4 @@
-const { Router } = require('express')
+const Router = require('express')
 const router = new Router() //1
 const plantController = require('../controllers/plantController')
 const { upload } = require('../service/upload.service')
