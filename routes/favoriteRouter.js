@@ -1,17 +1,17 @@
 const Router = require('express')
 const router = new Router()
-const favoriteRouter = require('../controllers/favoriteRouter')
+const favoriteController = require('../controllers/favoriteController')
 const checkRole = require('../middleware/checkRoleMiddleware')
 
 router.post('/', 
 // checkRole('ADMIN'), 
-favoriteRouter.create)
+favoriteController.create)
 
-router.delete('/', 
+router.delete('/:userId/:plantId', 
 // checkRole('ADMIN'), 
-favoriteRouter.delete)
+favoriteController.delete)
 
-router.get('/:userId', favoriteRouter.getByUser)
-router.get('/', favoriteRouter.getAll)
+router.get('/:userId', favoriteController.getByUser)
+router.get('/', favoriteController.getAll)
 
 module.exports = router

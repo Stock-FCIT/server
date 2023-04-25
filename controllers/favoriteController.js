@@ -14,7 +14,7 @@ class FavoriteController {
 
    async delete(req, res, next) {
       try {
-         const {userId, plantId} = req.body
+         const {userId, plantId} = req.params
          const favorite = await Favorite.destroy({where:{userId, plantId}})
          return res.json("Succeess delete!")
       } catch(e) {
