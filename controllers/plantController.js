@@ -8,21 +8,22 @@ class PlantController {
 
    async create(req, res, next) {
       try {
-         const {name, price, description, categoryId, rating} = req.body
-         const { file } = req
-         if (!file) throw new ErrorHandler(400, 'Image is required')
+         const {name, price, description, categoryId, img, rating} = req.body
+         // const { file } = req
+         // if (!file) throw new ErrorHandler(400, 'Image is required')
      
-         const fileFormat = file.mimetype.split('/')[1]
-         const { base64 } = bufferToDataURI(fileFormat, file.buffer)
+         // const fileFormat = file.mimetype.split('/')[1]
+         // const { base64 } = bufferToDataURI(fileFormat, file.buffer)
      
-         const imageDetails = await uploadToCloudinary(base64, fileFormat)
+         // const imageDetails = await uploadToCloudinary(base64, fileFormat)
      
          // res.json({
          //   status: 'success',
          //   message: 'Upload successful',
          //   data: imageDetails,
          // })
-         const plant = await Plant.create({name, price, description, categoryId, img: imageDetails.url, rating})
+         // const plant = await Plant.create({name, price, description, categoryId, img: imageDetails.url, rating})
+         const plant = await Plant.create({name, price, description, categoryId, img, rating})
 
          return res.json(plant)
       } catch(e) {

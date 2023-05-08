@@ -117,19 +117,23 @@ class UserController {
       return res.json({token})
    }
 
-   async getUserInfo(req, res) {
-      const {id} = req.params
-      const user = await User.findOne({where:{id}}) 
-      return res.json({
-         id: user.id, 
-         name: user.name,
-         email: user.email,
-         phone: user.phone,
-         country: user.country,
-         city: user.city,
-         address: user.address,
-         role: user.role
-      })
+   async getUserInfo(req, res, next) {
+      try {
+         const {id} = req.params
+         const user = await User.findOne({where:{id}}) 
+         return res.json({
+            id: user.id, 
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            country: user.country,
+            city: user.city,
+            address: user.address,
+            role: user.role
+         })
+      } catch (e) {
+         next(ApiError.badRequest(e.message))
+      }
    }
 }
 
