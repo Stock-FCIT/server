@@ -1,4 +1,5 @@
-const {Plant} = require('../models/models') 
+const {Plant, Category} = require('../models/models') 
+const { Op } = require("sequelize")
 const ApiError = require('../error/ApiError')
 const { uploadToCloudinary } = require("../service/upload.service");
 const { ErrorHandler } = require('../utils/errorHandler')
@@ -44,17 +45,52 @@ class PlantController {
 
    async getAll(req, res, next) {
       try {
-         let {categoryId, limit, page} = req.query
+         let {category, sort, limit, page} = req.query
          page = page || 1
          limit = limit || 12 
-         let offset = page * limit - limit
+
+         let categoryId = null
+         let offset = page * limit - limit         
+         
+         const name = category
+         if (category) categoryId = (await Category.findOne({where:{name}})).id || null
+         // const categories = await Category.findAll()
+         // const categoriesName  = categories.map(category => category.name) 
+
+
+         // categoryId = (await Category.findOne({where:{name}})).id
+
          let plants
-         if (!categoryId) {
+         if (!categoryId && !sort) {
             plants = await Plant.findAndCountAll({limit, offset})
          }
-         if (categoryId) {
-            plants = await Plant.findAndCountAll({where:{categoryId, limit, offset}})
-         }
+         if (categoryId && sort == "popular") {
+            plants = await Plant.findAndCountAll({
+               where: {categoryId},
+               order: [['rating', 'DESC']]
+            })
+         } 
+         if (categoryId && sort == "new") {
+            plants = await Plant.findAndCountAll({
+               where: {categoryId},
+               order: [['createdAt', 'DESC']]
+            })
+         } 
+         if (!categoryId && sort == "popular") {
+            plants = await Plant.findAndCountAll({
+               order: [['rating', 'DESC']]
+            })
+         } 
+         if (!categoryId && sort == "new") {
+            plants = await Plant.findAndCountAll({
+               order: [['createdAt', 'DESC']]
+            })
+         } 
+         if (categoryId && !sort) {
+            plants = await Plant.findAndCountAll({
+               where: {categoryId},
+            })
+         } 
 
          return res.json(plants)
       } catch (e) {
@@ -67,6 +103,7 @@ class PlantController {
       const plant = await Plant.findOne({where:{id}}) 
       return res.json(plant)
    }
+
 }
 
 module.exports = new PlantController()

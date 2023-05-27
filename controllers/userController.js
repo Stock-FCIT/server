@@ -120,17 +120,19 @@ class UserController {
    async getUserInfo(req, res, next) {
       try {
          const {id} = req.params
-         const user = await User.findOne({where:{id}}) 
-         return res.json({
-            id: user.id, 
-            name: user.name,
-            email: user.email,
-            phone: user.phone,
-            country: user.country,
-            city: user.city,
-            address: user.address,
-            role: user.role
-         })
+         if (id) {
+            const user = await User.findOne({where:{id}}) 
+            return res.json({
+               id: user.id, 
+               name: user.name,
+               email: user.email,
+               phone: user.phone,
+               country: user.country,
+               city: user.city,
+               address: user.address,
+               role: user.role
+            })
+         } else { return res.status(500).json({message: 'UserId = null'}) }
       } catch (e) {
          next(ApiError.badRequest(e.message))
       }

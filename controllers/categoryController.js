@@ -1,4 +1,4 @@
-const {Category} = require('../models/models')
+const {Category, Plant} = require('../models/models')
 const ApiError = require('../error/ApiError')
 
 class CategoryController {
