@@ -53,7 +53,7 @@ class PlantController {
          let offset = page * limit - limit         
          
          const name = category
-         if (category) categoryId = (await Category.findOne({where:{name}})).id || null
+         if (category && category != "All") categoryId = (await Category.findOne({where:{name}})).id || null
          // const categories = await Category.findAll()
          // const categoriesName  = categories.map(category => category.name) 
 
@@ -64,6 +64,7 @@ class PlantController {
          if (!categoryId && !sort) {
             plants = await Plant.findAndCountAll({limit, offset})
          }
+         
          if (categoryId && sort == "popular") {
             plants = await Plant.findAndCountAll({
                where: {categoryId},
