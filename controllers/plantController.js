@@ -50,10 +50,11 @@ class PlantController {
          limit = limit || 12 
 
          let categoryId = null
-         let offset = page * limit - limit         
-         
-         const name = category
-         if (category && category != "All") categoryId = (await Category.findOne({where:{name}})).id || null
+         let offset = page * limit - limit    
+
+         let name
+         if (category) name = category.charAt(0).toUpperCase() + category.slice(1)
+         if (category && name != "All") categoryId = (await Category.findOne({where:{name}})).id || null
          // const categories = await Category.findAll()
          // const categoriesName  = categories.map(category => category.name) 
 
