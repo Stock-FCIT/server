@@ -45,18 +45,18 @@ class PlantController {
 
    async getAll(req, res, next) {
       try {
-         let {category, sort, limit, page} = req.query
+         let {categoryId, sort, limit, page} = req.query
          page = page || 1
          limit = limit || 12 
-
-         let categoryId = null
+         categoryId = categoryId || null
+         
          let offset = page * limit - limit    
 
-         let name = null
-         if (category && category !== "null") name = category.charAt(0).toUpperCase() + category.slice(1)
+         // let name = null
+         // if (category && category !== "null") name = category.charAt(0).toUpperCase() + category.slice(1)
          
-         if (category && name !== "All" && name !== null) categoryId = (await Category.findOne({where:{name}})).id || null
-         if (sort == "null") sort = null
+         // if (category && name !== "All" && name !== null) categoryId = (await Category.findOne({where:{name}})).id || null
+         // if (sort == "null") sort = null
          // const categories = await Category.findAll()
          // const categoriesName  = categories.map(category => category.name) 
 
