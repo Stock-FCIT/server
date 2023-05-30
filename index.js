@@ -18,7 +18,7 @@ const start = async () => {
       await sequelize.authenticate();
       await sequelize.sync();
       app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
-      app.get('/', (req, res) => res.json("Just for test"))
+      app.get('/', (req, res) => res.json("Stock API SERVER"))
    } catch (e) {
       console.log(e);
    }
