@@ -31,7 +31,7 @@ class PlantController {
          next(ApiError.badRequest(e.message))
       }
    }
-
+   
    async delete(req, res, next) {
       try {
          const {id} = req.params
@@ -48,15 +48,16 @@ class PlantController {
          let {categoryId, sort, limit, page} = req.query
          page = page || 1
          limit = limit || 12 
-         categoryId = categoryId || null
-         
+
+         categoryId =  categoryId || null
          let offset = page * limit - limit    
 
+         if(categoryId === "1") categoryId = null
          // let name = null
          // if (category && category !== "null") name = category.charAt(0).toUpperCase() + category.slice(1)
          
          // if (category && name !== "All" && name !== null) categoryId = (await Category.findOne({where:{name}})).id || null
-         // if (sort == "null") sort = null
+         if (sort == "null") sort = null
          // const categories = await Category.findAll()
          // const categoriesName  = categories.map(category => category.name) 
 
@@ -64,7 +65,7 @@ class PlantController {
          // categoryId = (await Category.findOne({where:{name}})).id
 
          let plants
-         if (!categoryId && !sort) {
+         if (!categoryId && !sort ) {
             plants = await Plant.findAndCountAll({limit, offset})
          }
          
