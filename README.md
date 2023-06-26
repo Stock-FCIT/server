@@ -9,6 +9,8 @@ In Stock-FCIT organisation You can check frontend code.
 
 ## Deployment
 
+Due to free tier of render service, there can be problem with server's response, try to refresh page, or wait for 1-2 min.
+
 https://stock-dun-three.vercel.app/
 
 Client part of website is deployed on Vercel
