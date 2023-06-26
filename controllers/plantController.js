@@ -9,25 +9,21 @@ class PlantController {
 
    async create(req, res, next) {
       try {
-         const {name, price, description, categoryId, rating} = req.body
-         const { file } = req
-         if (!file) throw new ErrorHandler(400, 'Image is required')
+         const {name, price, description, img, categoryId, rating} = req.body
+         // const { file } = req
+         // if (!file) throw new ErrorHandler(400, 'Image is required')
      
-         const fileFormat = file.mimetype.split('/')[1]
-         const { base64 } = bufferToDataURI(fileFormat, file.buffer)
+         // const fileFormat = file.mimetype.split('/')[1]
+         // const { base64 } = bufferToDataURI(fileFormat, file.buffer)
      
-         const imageDetails = await uploadToCloudinary(base64, fileFormat)
-     
-         // res.json({
-         //   status: 'success',
-         //   message: 'Upload successful',
-         //   data: imageDetails,
-         // })
-         const plant = await Plant.create({name, price, description, categoryId, img: imageDetails.url, rating})
-         //const plant = await Plant.create({name, price, description, categoryId, img, rating})
+         // const imageDetails = await uploadToCloudinary(base64, fileFormat)
+
+         // const plant = await Plant.create({name, price, description, categoryId, img: imageDetails.url, rating})
+         const plant = await Plant.create({name, price, description, categoryId, img, rating})
 
          return res.json(plant)
       } catch(e) {
+         console.log(e)
          next(ApiError.badRequest(e.message))
       }
    }
@@ -53,16 +49,7 @@ class PlantController {
          let offset = page * limit - limit    
 
          if(categoryId === "1") categoryId = null
-         // let name = null
-         // if (category && category !== "null") name = category.charAt(0).toUpperCase() + category.slice(1)
-         
-         // if (category && name !== "All" && name !== null) categoryId = (await Category.findOne({where:{name}})).id || null
          if (sort == "null") sort = null
-         // const categories = await Category.findAll()
-         // const categoriesName  = categories.map(category => category.name) 
-
-
-         // categoryId = (await Category.findOne({where:{name}})).id
 
          let plants
          if (!categoryId && !sort ) {
