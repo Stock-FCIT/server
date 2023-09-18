@@ -1,3 +1,7 @@
+# Attention
+
+Due to unability to pay for the service to store database and non-existence of free long-term services, back-end cannot load the database, and therefore you cannot check functionality of this site.
+
 # Stock
 
 Stock it's the first 
